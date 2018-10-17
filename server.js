@@ -5,7 +5,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 
 const { PORT } = require('./config');
-
+const folderRouter = require('./routes/folders'); 
 const notesRouter = require('./routes/notes');
 
 // Create an Express application
@@ -25,7 +25,7 @@ app.use(express.json());
 
 // Mount router on "/api"
 app.use('/api/notes', notesRouter);
-
+app.use('/api/folders', folderRouter); 
 // Custom 404 Not Found route handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
