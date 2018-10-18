@@ -124,12 +124,13 @@ router.put('/:id', (req, res, next) => {
 
 
 router.post('/', (req, res, next) => {
-  const { title, content, folderId } = req.body; // Add `folderId` to object destructure
+  const { title, content, folderId, tags } = req.body; // Add `folderId` to object destructure
 
   const newItem = {
     title: title,
     content: content,
-    folder_id: folderId // Add `folderId`
+    folder_id: folderId, 
+    // Add `folderId`
   };
 
   /***** Never trust users - validate input *****/
@@ -141,31 +142,37 @@ router.post('/', (req, res, next) => {
 
   let noteId;
 
-  // Insert new note, instead of returning all the fields, just return the new `id`
-  knex
-    .insert(newItem)
+  knex.insert(newItem)
     .into('notes')
     .returning('id')
-    .then(([id]) => {
+    .then(([id]) => { 
       noteId = id;
-      // Using the new id, select the new note and the folder
+      const tagsInsert = tags.map(tagId => ({ note_id: noteId, tag_id: tagId }));
       return knex
-        .select(
-          'notes.id',
-          'title',
-          'content',
-          'folder_id as folderId',
-          'folders.name as folderName'
-        )
+        .insert(tagsInsert)
+        .into('notes_tags');
+    })
+    .then(() => {
+      // Select the new note and leftJoin on folders and tags
+      return knex
+        .select('notes.id', 'title', 'content',
+          'folders.id as folderId', 'folders.name as folderName',
+          'tags.id as tagId', 'tags.name as tagName')
         .from('notes')
         .leftJoin('folders', 'notes.folder_id', 'folders.id')
+        .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+        .leftJoin('tags', 'notes_tags.tag_id', 'tags.id')
         .where('notes.id', noteId);
     })
-    .then(([result]) => {
-      res
-        .location(`${req.originalUrl}/${result.id}`)
-        .status(201)
-        .json(result);
+    .then((result) => {
+      if (result) {
+        // Hydrate the results
+        const hydrated = hydrateNotes(result)[0];
+        // Respond with a location header, a 201 status and a note object
+        res.location(`${req.originalUrl}/${hydrated.id}`).status(201).json(hydrated);
+      } else {
+        next();
+      }
     })
     .catch(err => next(err));
 });
