@@ -92,30 +92,54 @@ router.get('/:id', (req, res, next) => {
 router.put('/:id', (req, res, next) => {
   const id = req.params.id;
 
+  const {title, content, folderId, tags} = req.body; 
+
   /***** Never trust users - validate input *****/
-  const updateObj = {};
-  const updateableFields = ['title', 'content'];
+  const updateObj = {
+    title: title, 
+    content : content, 
+    folder_id : folderId, 
+  };
 
-  updateableFields.forEach(field => {
-    if (field in req.body) {
-      updateObj[field] = req.body[field];
-    }
-  });
+  if (!updateObj.title) { 
+    const err = new Error('Missing `title` in request body'); 
+    err.status = 400; 
+    return next(err); 
+  }
 
-  knex('notes')
-    .returning(['id', 'title', 'content'])
-    .where('id', id)
+  knex
+    .from('notes')
+    .where('notes.id', id)
     .update(updateObj)
-    .then(result => {
+    .then(() => { 
+      return knex 
+        .from('notes_tags')
+        .where('notes_tags.note_id', id)
+        .del(); 
+    })
+    .then(() => { 
+      const tagsInsert = tags.map(tagId => ({ note_id: id, tag_id: tagId }));
+      return knex
+        .insert(tagsInsert)
+        .into('notes_tags'); 
+    })
+    .then(() => {
       //res.json(result[0]); 
-      return knex.select('notes.id', 'title', 'content', 'folder_id as folderId', 'folders.name as folderName')
+      return knex
+        .select('notes.id', 'title', 'content', 'folder_id as folderId',    'folders.name as folderName')
         .from('notes')
         .leftJoin('folders', 'notes.folder_id', 'folders.id')
+        .leftJoin('notes_tags', 'notes.id', 'folders.id')
+        .leftJoin('tags', 'notes_tags.tag_id', 'tags.id')
         .where('notes.id', id); 
     })
-    .then(([result]) => { 
-      //res.json(result); 
-      
+    .then(result => { 
+      if (result) {
+        const hydrated = hydrateNotes(result)[0]; 
+        res.location(`${req.originalUrl}/${hydrated.id}`).status(201).json(hydrated); 
+      } else { 
+        next(); 
+      } 
     })
     .catch(err => { 
       next(err); 
