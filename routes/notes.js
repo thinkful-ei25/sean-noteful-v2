@@ -10,8 +10,9 @@ const hydrateNotes = require('../utils/hydrateNotes');
 
 // Get All (and search by query)
 router.get('/', (req, res, next) => {
-  const { searchTerm } = req.query;
-  const { folderId } = req.query;
+  const { searchTerm, folderId, tagId } = req.query;
+  //const { folderId } = req.query;
+  
   knex
     .select(
       'notes.id',
@@ -34,6 +35,11 @@ router.get('/', (req, res, next) => {
     .modify(function(queryBuilder) {
       if (folderId) {
         queryBuilder.where('folder_id', folderId);
+      }
+    })
+    .modify(function(queryBuilder) { 
+      if (tagId) { 
+        queryBuilder.where('tag_id', tagId); 
       }
     })
     .orderBy('notes.id')
@@ -60,14 +66,22 @@ router.get('/:id', (req, res, next) => {
       'title',
       'content',
       'folders.id as folderId',
-      'folders.name as folderName'
+      'folders.name as folderName', 
+      'tags.id as tagId', 
+      'tags.name as tagName'
     )
     .from('notes')
     .where('notes.id', id)
     .leftJoin('folders', 'notes.folder_id', 'folders.id')
+    .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
+    .leftJoin('tags', 'notes_tags.tag_id', 'tags.id')
     .then(result => {
-      console.log('result: ' + result);
-      res.json(result[0]);
+      if (result) {
+        const hydrated = hydrateNotes(result); 
+        res.json(hydrated[0]);
+      } else { 
+        next(); 
+      }
     })
     .catch(err => {
       next(err);
@@ -100,7 +114,8 @@ router.put('/:id', (req, res, next) => {
         .where('notes.id', id); 
     })
     .then(([result]) => { 
-      res.json(result); 
+      //res.json(result); 
+      
     })
     .catch(err => { 
       next(err); 
