@@ -96,7 +96,15 @@ describe('Noteful API', function() {
         }); 
     });
 
-    //it('should respond with a 404 fan an invalid id', function() {});
+    it('should return an empty array for an incorrect searchTerm', function() {
+      return chai
+        .request(app)
+        .get('/api/notes?searchTerm=pizza')
+        .then(function(res){ 
+          expect(res.body).to.be.a('array'); 
+          expect(res.body).to.have.length(0); 
+        }); 
+    });
   });
 
   // describe('POST /api/notes', function() {
