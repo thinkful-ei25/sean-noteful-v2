@@ -159,27 +159,41 @@ describe('Noteful API', function() {
         content: 'Can there be no greater thing than cheese$1',
         folderId: 1,
         folderName: 'Archive',
-        tagId: 3,
-        tagName: 'BOXING'
+        tags: []
       };
       return chai
         .request(app)
         .post('/api/notes')
         .send(newItem)
-        .then(function(res) { 
-          expect(res).to.have.status(400); 
-        }); 
-    }); 
-  
+        .then(function(res) {
+          expect(res).to.have.status(400);
+        });
+    });
   });
 
-  // describe('PUT /api/notes/:id', function() {
-  //   it('should update the note', function() {});
+  describe('PUT /api/notes/:id', function() {
+    it('should update the note', function() {
+      const newItem = {
+        title: 'have a very spooky cherry tree',
+        content: 'spark the thought',
+        folder_id: 1,
+        tags: []
+      };
+      return chai
+        .request(app)
+        .put('/api/notes/10')
+        .send(newItem)
+        .then(function(res) { 
+          expect(res).to.have.status(201); 
+          expect(res.body.title).to.deep.equal(newItem.title); 
 
-  //   it('should respond with a 404 for an invalid id', function() {});
+        }); 
+    });
 
-  //   it('should return an error when missing "title" field', function() {});
-  // });
+    //it('should respond with a 404 for an invalid id', function() {});
+
+    //it('should return an error when missing "title" field', function() {});
+  });
 
   // describe('DELETE  /api/notes/:id', function() {
   //   it('should delete an item by id', function() {});
