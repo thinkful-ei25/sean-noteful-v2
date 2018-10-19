@@ -117,7 +117,13 @@ describe('Noteful API', function () {
     it('should return an error when missing "title" field', function () {
 
     });
+  }); 
 
+  describe('DELETE  /api/notes/:id', function () {
 
+    it('should delete an item by id', function () {
 
+    });
+
+  });
 });
