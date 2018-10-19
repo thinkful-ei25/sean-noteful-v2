@@ -44,8 +44,6 @@ router.get('/', (req, res, next) => {
     })
     .orderBy('notes.id')
     .then(results => {
-      //res.json(results); 
-      console.log(results);
       if (results) {
         const hydrated = hydrateNotes(results); 
         res.json(hydrated);
@@ -76,7 +74,8 @@ router.get('/:id', (req, res, next) => {
     .leftJoin('notes_tags', 'notes.id', 'notes_tags.note_id')
     .leftJoin('tags', 'notes_tags.tag_id', 'tags.id')
     .then(result => {
-      if (result) {
+      if (result && result.length !== 0) {
+        console.log('result: ' + result);
         const hydrated = hydrateNotes(result); 
         res.json(hydrated[0]);
       } else { 
@@ -84,6 +83,7 @@ router.get('/:id', (req, res, next) => {
       }
     })
     .catch(err => {
+      console.log('error' + err);
       next(err);
     });
 });

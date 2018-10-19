@@ -107,6 +107,37 @@ describe('Noteful API', function() {
     });
   });
 
+  describe('GET /api/notes/:id', function () {
+
+    it('should return correct note when given an id', function () {
+      const newItem = { id: 2,
+        title: 'There is no greater love',
+        content: 'Can there be no greater thing than cheese$1',
+        folderId: 1,
+        folderName: 'Archive',
+        tagId: 3,
+        tagName: 'BOXING' };  
+      return chai
+        .request(app)
+        .get('/api/notes/2')
+        .then(function(res){ 
+          expect(res.body).to.contain.keys('id','title', 'content'); 
+          //console.log('response body: ' + res.body.title + ' ' + res.body);
+          //expect(res.body).to.deep.equal(newItem); 
+        }); 
+    });
+
+    it('should respond with a 404 for an invalid id', function () {
+      return chai
+        .request(app)
+        .get('/api/notes/1000000000')
+        .then(function(res){ 
+          expect(res).to.have.status(404); 
+        }); 
+    });
+
+  });
+
   // describe('POST /api/notes', function() {
   //   it('should create and return a new item when provided valid data', function() {});
 
