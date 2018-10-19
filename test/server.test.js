@@ -80,11 +80,24 @@ describe('Noteful API', function() {
     });
   });
 
-  // describe('Get /api/notes', function() {
-  //   it('should return an array of objects wher eeach item contains id, title, and content', function() {});
+  describe('Get /api/notes', function() {
+    it('should return an array of objects where each item contains id, title, and content', function() {
+      return chai
+        .request(app)
+        .get('/api/notes')
+        .then(function(res){ 
+          expect(res.body).to.be.a('array');
+          res.body.forEach(function(item) { 
+            expect(item).to.be.a('object'); 
+            expect(item).to.contain.keys(
+              'id', 'title', 'content'
+            ); 
+          });  
+        }); 
+    });
 
-  //   it('should respond with a 404 fan an invalid id', function() {});
-  // });
+    //it('should respond with a 404 fan an invalid id', function() {});
+  });
 
   // describe('POST /api/notes', function() {
   //   it('should create and return a new item when provided valid data', function() {});
