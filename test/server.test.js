@@ -52,7 +52,7 @@ describe('Noteful API', function () {
       return chai.request(app)
         .get('/api/notes')
         .then(function (res) {
-          expect(res).to.have.status(200);
+          expect(res).to.have.status(201);
           expect(res).to.be.json;
           expect(res.body).to.be.a('array');
           expect(res.body).to.have.length(10);
@@ -73,5 +73,51 @@ describe('Noteful API', function () {
     });
 
   });
+
+  describe('404 handler', function() { 
+    it('should respond with 404 when given a bad path', function(){ 
+
+    }); 
+
+  }); 
+
+  describe('GEt /api/notes', function(){ 
+    it('should return an array of objects wher eeach item contains id, title, and content', function(){ 
+
+    });
+    
+    it('should respond with a 404 fan an invalid id', function(){ 
+
+    }); 
+
+  }); 
+
+  describe('POST /api/notes', function () {
+
+    it('should create and return a new item when provided valid data', function () {
+
+    });
+
+    it('should return an error when missing "title" field', function () {
+
+    });
+
+  });
+
+  describe('PUT /api/notes/:id', function () {
+
+    it('should update the note', function () {
+
+    });
+
+    it('should respond with a 404 for an invalid id', function () {
+
+    });
+
+    it('should return an error when missing "title" field', function () {
+
+    });
+
+
 
 });
