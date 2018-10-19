@@ -167,6 +167,9 @@ describe('Noteful API', function() {
         .send(newItem)
         .then(function(res) {
           expect(res).to.have.status(400);
+          let err = new Error('Missing `title` in request body'); 
+          expect(res).to.throw(); 
+          //expect(res).throws(Error); 
         });
     });
   });
@@ -190,7 +193,7 @@ describe('Noteful API', function() {
         }); 
     });
 
-    //it('should respond with a 404 for an invalid id', function() {});
+    it('should respond with a 404 for an invalid id', function() {});
 
     //it('should return an error when missing "title" field', function() {});
   });
