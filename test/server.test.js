@@ -8,62 +8,58 @@ const expect = chai.expect;
 
 chai.use(chaiHttp);
 
-describe('Sanity check', function () {
-
-  it('true should be true', function () {
+describe('Sanity check', function() {
+  it('true should be true', function() {
     expect(true).to.be.true;
   });
 
-  it('2 + 2 should equal 4', function () {
+  it('2 + 2 should equal 4', function() {
     expect(2 + 2).to.equal(4);
   });
-
 });
 
-
-describe('Static Server', function () {
-
-  it('GET request "/" should return the index page', function () {
-    return chai.request(app)
+describe('Static Server', function() {
+  it('GET request "/" should return the index page', function() {
+    return chai
+      .request(app)
       .get('/')
-      .then(function (res) {
+      .then(function(res) {
         expect(res).to.exist;
         expect(res).to.have.status(200);
         expect(res).to.be.html;
       });
   });
-
 });
 
-describe('Noteful API', function () {
+describe('Noteful API', function() {
   const seedData = require('../db/seedData');
 
-  beforeEach(function () {
+  beforeEach(function() {
     return seedData('./db/noteful.sql');
   });
 
-  after(function () {
+  after(function() {
     return knex.destroy(); // destroy the connection
   });
 
-  describe('GET /api/notes', function () {
-
-    it('should return the default of 10 Notes ', function () {
-      return chai.request(app)
+  describe('GET /api/notes', function() {
+    it('should return the default of 10 Notes ', function() {
+      return chai
+        .request(app)
         .get('/api/notes')
-        .then(function (res) {
-          expect(res).to.have.status(201);
+        .then(function(res) {
+          expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.a('array');
           expect(res.body).to.have.length(10);
         });
     });
 
-    it('should return correct search results for a valid searchTerm', function () {
-      return chai.request(app)
+    it('should return correct search results for a valid searchTerm', function() {
+      return chai
+        .request(app)
         .get('/api/notes?searchTerm=moon')
-        .then(function (res) {
-          console.log('response body: ' + res.body[0].title);
+        .then(function(res) {
           expect(res).to.have.status(200);
           expect(res).to.be.json;
           expect(res.body).to.be.a('array');
@@ -71,59 +67,40 @@ describe('Noteful API', function () {
           expect(res.body[0]).to.be.an('object');
         });
     });
-
   });
 
-  describe('404 handler', function() { 
-    it('should respond with 404 when given a bad path', function(){ 
-
-    }); 
-
-  }); 
-
-  describe('GEt /api/notes', function(){ 
-    it('should return an array of objects wher eeach item contains id, title, and content', function(){ 
-
+  describe('404 handler', function() {
+    it('should respond with 404 when given a bad path', function() {
+      return chai
+        .request(app)
+        .get('/api/PATHDOESNOTEXISTS/REALLYDOESNTEXIST')
+        .then(function(res) {
+          expect(res).to.have.status(404);
+        });
     });
-    
-    it('should respond with a 404 fan an invalid id', function(){ 
-
-    }); 
-
-  }); 
-
-  describe('POST /api/notes', function () {
-
-    it('should create and return a new item when provided valid data', function () {
-
-    });
-
-    it('should return an error when missing "title" field', function () {
-
-    });
-
   });
 
-  describe('PUT /api/notes/:id', function () {
+  // describe('Get /api/notes', function() {
+  //   it('should return an array of objects wher eeach item contains id, title, and content', function() {});
 
-    it('should update the note', function () {
+  //   it('should respond with a 404 fan an invalid id', function() {});
+  // });
 
-    });
+  // describe('POST /api/notes', function() {
+  //   it('should create and return a new item when provided valid data', function() {});
 
-    it('should respond with a 404 for an invalid id', function () {
+  //   it('should return an error when missing "title" field', function() {});
+  // });
 
-    });
+  // describe('PUT /api/notes/:id', function() {
+  //   it('should update the note', function() {});
 
-    it('should return an error when missing "title" field', function () {
+  //   it('should respond with a 404 for an invalid id', function() {});
 
-    });
-  }); 
+  //   it('should return an error when missing "title" field', function() {});
+  // });
 
-  describe('DELETE  /api/notes/:id', function () {
-
-    it('should delete an item by id', function () {
-
-    });
-
-  });
+  // describe('DELETE  /api/notes/:id', function() {
+  //   it('should delete an item by id', function() {});
+  // });
 });
