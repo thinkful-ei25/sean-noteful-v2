@@ -167,8 +167,9 @@ describe('Noteful API', function() {
         .send(newItem)
         .then(function(res) {
           expect(res).to.have.status(400);
-          let err = new Error('Missing `title` in request body'); 
-          expect(res).to.throw(); 
+          //console.log('yo:: ' + JSON.stringify(res.text));
+          //res.body.message
+          //expect(res.body).to.throw(Error); 
           //expect(res).throws(Error); 
         });
     });
@@ -193,7 +194,22 @@ describe('Noteful API', function() {
         }); 
     });
 
-    it('should respond with a 404 for an invalid id', function() {});
+    it('should respond with a 404 for an invalid id', function() {
+      const newItem = {
+        title: 'have a very spooky cherry tree',
+        content: 'spark the thought',
+        folder_id: 1,
+        tags: []
+      };
+      return chai
+        .request(app)
+        .put('/api/notes/10000')
+        .send(newItem)
+        .then(function(res) { 
+          expect(res).to.have.status(404); 
+        }); 
+
+    });
 
     //it('should return an error when missing "title" field', function() {});
   });

@@ -134,7 +134,7 @@ router.put('/:id', (req, res, next) => {
         .where('notes.id', id); 
     })
     .then(result => { 
-      if (result) {
+      if (result && result.length !== 0) {
         const hydrated = hydrateNotes(result)[0]; 
         res.location(`${req.originalUrl}/${hydrated.id}`).status(201).json(hydrated); 
       } else { 
@@ -189,7 +189,7 @@ router.post('/', (req, res, next) => {
         .where('notes.id', noteId);
     })
     .then((result) => {
-      if (result) {
+      if (result && result.length !== 0) {
         // Hydrate the results
         const hydrated = hydrateNotes(result)[0];
         // Respond with a location header, a 201 status and a note object
