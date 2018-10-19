@@ -211,7 +211,21 @@ describe('Noteful API', function() {
 
     });
 
-    //it('should return an error when missing "title" field', function() {});
+    it('should return an error when missing "title" field', function() {
+      const newItem = {
+
+        content: 'spark the thought',
+        folder_id: 1,
+        tags: []
+      };
+      return chai
+        .request(app)
+        .put('/api/notes/2')
+        .send(newItem)
+        .then(function(res) { 
+          expect(res).to.have.status(400); 
+        }); 
+    });
   });
 
   // describe('DELETE  /api/notes/:id', function() {
