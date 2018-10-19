@@ -138,28 +138,26 @@ describe('Noteful API', function() {
 
   });
 
-  // describe('POST /api/notes', function() {
-  //   const newItem = {
-  //     'title' : 'have a very spooky cherry tree', 
-  //     'content' : 'spark the thought', 
-  //     'folderId' : 2, 
-  //     'folderName' : 'Drafts', 
-  //     'tagId' : null, 
-  //     'tagName' : null
-  //   }; 
+  describe('POST /api/notes', function() {
+    const newItem = {
+      'title' : 'have a very spooky cherry tree', 
+      'content' : 'spark the thought', 
+      'folder_id' : 1 ,
+      'tags' : []
+    }; 
  
-  //   it('should create and return a new item when provided valid data', function() {
-  //     return chai
-  //       .request(app)
-  //       .post('/api/notes')
-  //       .send(newItem)
-  //       .then(function(res){ 
-  //         expect(res).to.have.status(201); 
-  //       }); 
-  //   });
+    it('should create and return a new item when provided valid data', function() {
+      return chai
+        .request(app)
+        .post('/api/notes')
+        .send(newItem)
+        .then(function(res){ 
+          expect(res).to.have.status(201); 
+        }); 
+    });
 
-  //   //it('should return an error when missing "title" field', function() {});
-  // });
+    //it('should return an error when missing "title" field', function() {});
+  });
 
   // describe('PUT /api/notes/:id', function() {
   //   it('should update the note', function() {});
