@@ -122,8 +122,8 @@ describe('Noteful API', function() {
         .get('/api/notes/2')
         .then(function(res){ 
           expect(res.body).to.contain.keys('id','title', 'content'); 
-          //console.log('response body: ' + res.body.title + ' ' + res.body);
-          //expect(res.body).to.deep.equal(newItem); 
+          expect(res.body.title).to.deep.equal(newItem.title); 
+          expect(res.body.content).to.deep.equal(newItem.content); 
         }); 
     });
 
@@ -139,9 +139,26 @@ describe('Noteful API', function() {
   });
 
   // describe('POST /api/notes', function() {
-  //   it('should create and return a new item when provided valid data', function() {});
+  //   const newItem = {
+  //     'title' : 'have a very spooky cherry tree', 
+  //     'content' : 'spark the thought', 
+  //     'folderId' : 2, 
+  //     'folderName' : 'Drafts', 
+  //     'tagId' : null, 
+  //     'tagName' : null
+  //   }; 
+ 
+  //   it('should create and return a new item when provided valid data', function() {
+  //     return chai
+  //       .request(app)
+  //       .post('/api/notes')
+  //       .send(newItem)
+  //       .then(function(res){ 
+  //         expect(res).to.have.status(201); 
+  //       }); 
+  //   });
 
-  //   it('should return an error when missing "title" field', function() {});
+  //   //it('should return an error when missing "title" field', function() {});
   // });
 
   // describe('PUT /api/notes/:id', function() {
