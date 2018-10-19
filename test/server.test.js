@@ -213,7 +213,6 @@ describe('Noteful API', function() {
 
     it('should return an error when missing "title" field', function() {
       const newItem = {
-
         content: 'spark the thought',
         folder_id: 1,
         tags: []
@@ -228,7 +227,14 @@ describe('Noteful API', function() {
     });
   });
 
-  // describe('DELETE  /api/notes/:id', function() {
-  //   it('should delete an item by id', function() {});
-  // });
+  describe('DELETE  /api/notes/:id', function() {
+    it('should delete an item by id', function() {
+      return chai
+        .request(app)
+        .del('/api/notes/2')
+        .then(function(res) { 
+          expect(res).to.have.status(204); 
+        }); 
+    });
+  });
 });
